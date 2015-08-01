@@ -6,13 +6,18 @@ var message = new Buffer('Kyber Kyber Kyber Kyber Kyber Kyber Kyber Kyber Kyber 
 var async = require('async')
 var fs = require('fs'),
 PNG = require('node-pngjs').PNG;
-var host = "185.11.209.162";
+var host = "127.0.0.1";
 
 var buf = []
 
 var sleep = require('sleep');
 
 
+if (process.argv[2]) {
+  host = process.argv[2];
+}
+
+console.log(host);
 
 function shuffle(o){ //v1.0
     for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
