@@ -15,6 +15,8 @@ var sleep = require('sleep');
 
 if (process.argv[2]) {
   host = process.argv[2];
+} else {
+  console.log("Give dst address on the first argument");
 }
 
 console.log(host);
