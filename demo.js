@@ -6,13 +6,15 @@ var message = new Buffer('Kyber Kyber Kyber Kyber Kyber Kyber Kyber Kyber Kyber 
 var async = require('async')
 var fs = require('fs'),
 PNG = require('node-pngjs').PNG;
-var host = "185.11.209.162";
+var host = "87.92.12.142";
 
 var buf = []
 
 var sleep = require('sleep');
 
-
+function msleep(n) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, n);
+}
 
 function shuffle(o){ //v1.0
     for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
@@ -71,22 +73,27 @@ function loadImage(name, s, invert, cb) {
   );
 }
 
-function drawPixel(x, y) {
+function putpixel(x, y) {
+  x = Math.floor(x);
+  y = Math.floor(y);
   y = 1500 - y;
   if (y > 1500) {
     y = 1500;
   }
-  if (y < 0) {
-    y = 0;
+  if (y <= 0) {
+    y = 1;
   }
   if (x > 65000) {
     x = 65000;
   }
+  if (x <= 1) {
+    x = 1;
+  }
   client.send(message, 0, y, x, host, function(){});
-  console.log("drawpixel", x,y)
+  //console.log("drawpixel", x,y)
 }
 
-function draw(name, x, y, cb) {
+function draw(name, x, y, t, cb) {
       var buf = images[name];
       buf = shuffle(buf);
       console.log("Drawing", name, "pixels:", buf.length)
@@ -101,7 +108,7 @@ function draw(name, x, y, cb) {
         client.send(message, 0, Y, buf[i][1] + x, host, function(err, bytes) {});
       }
 
-      t = Math.floor(buf.length / 10)
+      //t = Math.floor(buf.length / 10)
 
       setTimeout(function() {
         console.log("Drawing", name, "done", t)
@@ -154,46 +161,90 @@ async.series([
       cb();
     })
   },
+  function preload1(cb) {
+    loadImage("nalle.png", 2, false, function(buf) {
+      images["nalle"] = buf;
+      cb();
+    })
+  },
+  function preload1(cb) {
+    loadImage("kekkonen.png", 2, false, function(buf) {
+      images["kekkonen"] = buf;
+      cb();
+    })
+  },
 
   function draw1(cb) {
     console.log("Starting!")
-    draw("hello", 20000, 1)
-    draw("hello", 20000, 1, cb)
+//    draw("hello", 20000, 1, 2000)
+    draw("hello", 20000, 1, 3000, cb)
+  },  
+  function sini(cb) {
+
+    for (var j = 0; j < 100; j++) {
+      var x_offset = Math.random() * 50000 + 100;
+      var y_offset = Math.random() * 50 + 1;
+      for (var i = 0; i < 1000; i++) {
+        putpixel(i + x_offset, i + y_offset);
+      }
+      msleep(100);
+    }
+
+    cb();
   },
   function draw1(cb) {
-    draw("netcrew", 20000, 500)
-    draw("netcrew", 20000, 500, cb)
-  },    function draw1(cb) {
-    draw("presents", 20000, 100)
-    draw("presents", 20000, 100)
-    draw("presents", 20000, 1000)
-    draw("presents", 20000, 1000, cb)
+    draw("netcrew", 20000, 400, 1000, cb)
+  },    
+  function draw1(cb) {
+    draw("presents", 20000, 500, 300, cb)
   },
+  function draw1(cb) {
+    draw("presents", 20000, 600, 300, cb)
+  },
+  function draw1(cb) {
+    draw("presents", 20000, 700, 300, cb)
+  },
+  function draw1(cb) {
+    draw("presents", 20000, 800, 300, cb)
+  },
+ // Animoi ankkaa vasemmalta oikealle
   function draw2(cb) {
-    draw("duck2", 0, 10, cb)
+    draw("duck2", 0, 10, 1000, cb)
   },  
+  function draw2(cb) {
+    draw("duck2", 500, 10, 1000, cb)
+  },  
+  function draw2(cb) {
+    draw("duck2", 1000, 10, 1000, cb)
+  },  
+  function draw2(cb) {
+    draw("duck2", 1500, 10, 1000, cb)
+  },  
+  function draw2(cb) {
+    draw("duck2", 2000, 10, 1000, cb)
+  },  
+  function draw2(cb) {
+    draw("duck2", 2500, 10, 1000, cb)
+  },  
+  function draw2(cb) {
+    draw("duck2", 3000, 10, 1000, cb)
+  },  
+ 
   function (cb) {
-    draw("kitty", 10, 10)
-    draw("kitty", 10, 10, cb)
-  },  function (cb) {
+    draw("kitty", 10000, 10, 1000, cb)
+  },
+  function (cb) {
     setTimeout(cb, 2500)
   },
 
   function draw2(cb) {
-    draw("pony", 30000, 10)
-    draw("pony", 30000, 10, cb)
+    draw("pony", 30000, 10, 1000, cb)
   },
 
-  function draw2(cb) {
-    draw("duck2", 1000, 100, cb)
-  },
-  function draw2(cb) {
-    draw("duck2", 10000, 200, cb)
-  }    
 
-
-
-
+  function(cb) {
+    cb();
+  }
   ])
 
 
